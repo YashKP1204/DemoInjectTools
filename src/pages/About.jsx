@@ -17,7 +17,7 @@ export default function About() {
       </div>
 
       <section className="section reveal">
-        <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-2 gap-16 items-center">
+        <div className="mx-auto max-w-7xl px-6 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <div>
             <SectionTitle>Our Mission</SectionTitle>
             <p className="mt-6 text-lg text-gray-300 leading-relaxed">
@@ -45,11 +45,11 @@ function OwnerSection() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="bg-[#0c1218] rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
           <div className="grid md:grid-cols-2">
-            <div className="relative h-[400px] md:h-auto overflow-hidden group">
+            <div className="relative h-[300px] md:h-auto overflow-hidden group">
               <img src="/assets/images/owner.jpg" alt="Founder Portrait" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r" />
             </div>
-            <div className="p-10 md:p-16 flex flex-col justify-center">
+            <div className="p-8 md:p-16 flex flex-col justify-center">
               <div className="inline-block px-3 py-1 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] text-sm font-semibold mb-6 w-fit">Leadership</div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Built on Precision, <br/>Driven by Integrity.</h2>
               <blockquote className="text-xl text-gray-300 italic mb-8 border-l-4 border-[var(--accent)] pl-6">
