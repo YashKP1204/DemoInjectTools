@@ -10,7 +10,12 @@ import Industries from './pages/Industries'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
 import AdminLogin from './pages/admin/Login'
-import AdminDashboard from './pages/admin/Dashboard'
+import AdminLayout from './pages/admin/AdminLayout'
+import Overview from './pages/admin/Overview'
+import RFQs from './pages/admin/RFQs'
+import ContentEditor from './pages/admin/ContentEditor'
+import MediaManager from './pages/admin/MediaManager'
+import ThemeSettings from './pages/admin/Settings'
 
 export default function App() {
   const location = useLocation()
@@ -38,7 +43,14 @@ export default function App() {
     return (
       <Routes>
         <Route path="/admin-login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Overview />} />
+          <Route path="rfqs" element={<RFQs />} />
+          <Route path="content" element={<ContentEditor />} />
+          <Route path="media" element={<MediaManager />} />
+          <Route path="settings" element={<ThemeSettings />} />
+        </Route>
       </Routes>
     )
   }
