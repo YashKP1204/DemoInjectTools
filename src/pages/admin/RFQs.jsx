@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export default function RFQs() {
   const [rfqs, setRfqs] = useState([])
@@ -10,12 +10,16 @@ export default function RFQs() {
 
   useEffect(() => {
     fetch(`${API_BASE}/api/admin/rfqs`, { credentials: 'include' })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        setRfqs(data)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          setRfqs(res.data)
+        } else {
+          setError(res.message || 'Unauthorized')
+        }
         setLoading(false)
       })
-      .catch(()=> {
+      .catch(() => {
         setError('Unauthorized or network error. Please login.')
         setLoading(false)
       })

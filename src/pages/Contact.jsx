@@ -1,12 +1,25 @@
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SectionTitle } from '../components/common/SectionTitle'
 import { Label } from '../components/common/Label'
+import { defaultContent } from '../config/defaultContent'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export default function Contact() {
+  const [content, setContent] = useState(defaultContent.contact)
   const [status, setStatus] = useState(null)
+  
+  useEffect(() => {
+    fetch(`${API_BASE}/api/content`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data.contact) {
+          setContent({ ...defaultContent.contact, ...res.data.contact })
+        }
+      })
+      .catch(() => {})
+  }, [])
   const [errors, setErrors] = useState({})
   const [files, setFiles] = useState([])
   const [step, setStep] = useState(0)
@@ -70,9 +83,10 @@ export default function Contact() {
     files.forEach(f => form.append('files', f))
     try {
       const res = await fetch(`${API_BASE}/api/rfq`, { method: 'POST', body: form })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        setStatus({ ok: false, message: data?.errors ? 'Validation failed' : 'Submission failed' })
+      const data = await res.json().catch(() => ({}))
+      
+      if (!res.ok || !data.success) {
+        setStatus({ ok: false, message: data?.errors ? 'Validation failed' : (data?.message || 'Submission failed') })
         return
       }
       setStatus({ ok: true, message: 'Submitted successfully. We will be in touch.' })
@@ -105,7 +119,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Visit Us</h3>
-                <p className="text-gray-400 mt-1">123 Precision Way<br/>Tech Valley, CA 94000</p>
+                <p className="text-gray-400 mt-1 whitespace-pre-line">{content.contactAddress}</p>
               </div>
             </div>
             
@@ -115,7 +129,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Email Us</h3>
-                <p className="text-gray-400 mt-1">contact@injecttools.com<br/>sales@injecttools.com</p>
+                <p className="text-gray-400 mt-1">{content.contactEmail}</p>
               </div>
             </div>
 
@@ -125,7 +139,7 @@ export default function Contact() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-white">Call Us</h3>
-                <p className="text-gray-400 mt-1">+1 (555) 012-3456<br/>Mon-Fri, 8am - 5pm PST</p>
+                <p className="text-gray-400 mt-1">{content.contactPhone}</p>
               </div>
             </div>
           </div>

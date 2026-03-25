@@ -16,6 +16,9 @@ import RFQs from './pages/admin/RFQs'
 import ContentEditor from './pages/admin/ContentEditor'
 import MediaManager from './pages/admin/MediaManager'
 import ThemeSettings from './pages/admin/Settings'
+import PortfolioManager from './pages/admin/PortfolioManager'
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export default function App() {
   const location = useLocation()
@@ -32,10 +35,29 @@ export default function App() {
       })
     }, { threshold: 0.15 })
 
-    const elements = document.querySelectorAll('.reveal')
-    elements.forEach(el => observer.observe(el))
+    const scanAndObserve = () => {
+      const elements = document.querySelectorAll('.reveal:not(.in-view)')
+      elements.forEach(el => observer.observe(el))
+    }
+
+    // Initial scan
+    scanAndObserve()
+
+    // Mutation observer to handle dynamically loaded content
+    const mutationObserver = new MutationObserver(() => {
+      scanAndObserve()
+    })
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
     
-    return () => observer.disconnect()
+    // Periodic scan just in case (optional but safe)
+    const intervalId = setInterval(scanAndObserve, 1000)
+
+    return () => {
+      observer.disconnect()
+      mutationObserver.disconnect()
+      clearInterval(intervalId)
+    }
   }, [location.pathname])
 
   // Admin routes don't use the main layout
@@ -47,6 +69,7 @@ export default function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Overview />} />
           <Route path="rfqs" element={<RFQs />} />
+          <Route path="portfolio" element={<PortfolioManager />} />
           <Route path="content" element={<ContentEditor />} />
           <Route path="media" element={<MediaManager />} />
           <Route path="settings" element={<ThemeSettings />} />

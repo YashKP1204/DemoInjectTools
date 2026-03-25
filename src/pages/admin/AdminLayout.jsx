@@ -9,16 +9,22 @@ export default function AdminLayout() {
   const navigate = useNavigate()
 
   const navItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: BarChart },
+    { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/admin/rfqs', label: 'RFQ Submissions', icon: FileInput },
+    { path: '/admin/portfolio', label: 'Portfolio Items', icon: ImageIcon },
     { path: '/admin/content', label: 'Content Editor', icon: FileText },
     { path: '/admin/media', label: 'Media Manager', icon: ImageIcon },
     { path: '/admin/settings', label: 'Theme Settings', icon: Settings },
   ]
 
-  const handleLogout = () => {
-    // In a real app, clear auth tokens here
-    navigate('/')
+  const handleLogout = async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' })
+      navigate('/')
+    } catch (e) {
+      console.error('Logout failed', e)
+      navigate('/')
+    }
   }
 
   return (

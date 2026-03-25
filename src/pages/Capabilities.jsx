@@ -1,40 +1,44 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SectionTitle } from '../components/common/SectionTitle'
+import { defaultContent } from '../config/defaultContent'
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export default function Capabilities() {
-  const caps = [
-    {
-      title: 'Precision Mold Manufacturing',
-      img: '/assets/images/cap-machining.jpg',
-      desc: 'We design and build high-cavitation, hot runner, and insert molds for medical consumables and packaging. Our EDM and high-speed machining centers achieve mirror finishes and tight shut-offs essential for flash-free parts.',
-      points: ['Multi-Cavity & Hot Runner', 'Insert & Overmolding', 'Class 101 Production Tooling', 'Prototype Molds (Aluminum/Soft Steel)']
-    },
-    {
-      title: 'CNC Machining',
-      img: '/assets/images/cap-laser.jpg',
-      desc: 'From PEEK and Ultem to Stainless Steel and Titanium, our CNC department specializes in complex geometries. We maintain strict process controls for surface finish and dimensional accuracy.',
-      points: ['5-Axis Milling', 'Swiss Turning', 'Wire EDM', 'Micro-Machining']
-    },
-    {
-      title: 'Tool Design & Engineering',
-      img: '/assets/images/part-1.jpg',
-      desc: 'Our engineering team uses advanced CAD/CAM software to simulate mold flow and optimize part design for manufacturability (DFM) before steel is cut.',
-      points: ['DFM Analysis', 'Mold Flow Simulation', '3D Modeling (SolidWorks)', 'Fixture Design']
-    },
-    {
-      title: 'Custom Manufacturing Solutions',
-      img: '/assets/images/hero-bg.jpg',
-      desc: 'Beyond standard tooling, we offer comprehensive manufacturing support including assembly, laser marking, and cleanroom packaging services.',
-      points: ['Cleanroom Assembly', 'Laser Marking & Engraving', 'Ultrasonic Welding', 'Validation Support (IQ/OQ/PQ)']
-    }
-  ]
+  const [content, setContent] = useState(defaultContent.capabilities)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    console.log('Fetching capabilities from:', `${API_BASE}/api/content`)
+    fetch(`${API_BASE}/api/content`)
+      .then(res => res.json())
+      .then(res => {
+        console.log('Capabilities API Response:', res)
+        if (res.success && res.data && res.data.capabilities) {
+          setContent({ ...defaultContent.capabilities, ...res.data.capabilities })
+        }
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Failed to fetch capabilities, using defaults:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  const caps = (content?.items || defaultContent.capabilities.items).map((item, i) => ({
+    ...item,
+    img: item.img || defaultContent.capabilities.items[i]?.img || '/assets/images/hero-bg.jpg',
+    points: Array.isArray(item.points) ? item.points : (typeof item.points === 'string' ? [item.points] : [])
+  }))
+
+  if (loading) return null
 
   return (
     <div className="bg-[#0b1a2a] min-h-screen">
       <div className="bg-black py-24 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-white reveal">Our Capabilities</h1>
-        <p className="mt-4 text-xl text-gray-400 max-w-2xl mx-auto reveal delay-100">End-to-end manufacturing solutions for the life science industry.</p>
+        <h1 className="text-4xl md:text-6xl font-bold text-white reveal">{content?.title || 'Our Capabilities'}</h1>
+        <p className="mt-4 text-xl text-gray-400 max-w-2xl mx-auto reveal delay-100">{content?.subtitle || 'End-to-end manufacturing solutions for the life science industry.'}</p>
       </div>
       
       <div className="max-w-7xl mx-auto px-6 py-24 space-y-32">

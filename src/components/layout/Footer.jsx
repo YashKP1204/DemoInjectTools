@@ -1,8 +1,24 @@
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { defaultContent } from '../../config/defaultContent'
+
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export function Footer() {
+  const [content, setContent] = useState(defaultContent.contact)
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/content`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data.contact) {
+          setContent({ ...defaultContent.contact, ...res.data.contact })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <footer id="footer" className="bg-black text-white border-t border-white/10">
       <div className="mx-auto max-w-7xl px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -18,9 +34,9 @@ export function Footer() {
         <div>
           <h3 className="font-semibold text-[var(--accent)]">Contact</h3>
           <ul className="mt-3 space-y-2 text-gray-400">
-            <li><a href="mailto:contact@injecttools.com" className="hover:text-white transition">contact@injecttools.com</a></li>
-            <li><a href="tel:+15550123" className="hover:text-white transition">+1 555 0123</a></li>
-            <li>123 Precision Way, Tech Valley, CA</li>
+            <li><a href={`mailto:${content.contactEmail}`} className="hover:text-white transition">{content.contactEmail}</a></li>
+            <li><a href={`tel:${content.contactPhone}`} className="hover:text-white transition">{content.contactPhone}</a></li>
+            <li>{content.contactAddress}</li>
           </ul>
         </div>
         <div>

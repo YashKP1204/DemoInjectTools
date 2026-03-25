@@ -2,6 +2,8 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+
 export function Header() {
   const location = useLocation()
   const isActive = (path) => location.pathname === path

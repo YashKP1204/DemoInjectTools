@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('')
@@ -12,18 +12,17 @@ export default function AdminLogin() {
     e.preventDefault()
     setError('')
     try {
-      let res = {}
-      // const res = await fetch(`${API_BASE}/api/auth/login`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   credentials: 'include',
-      //   body: JSON.stringify({ email, password })
-      // })
-      res.ok = true
-      if (res.ok) {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      })
+      const result = await res.json()
+      if (res.ok && result.ok) {
         window.location.href = '/admin/dashboard'
       } else {
-        setError('Invalid credentials')
+        setError(result.error || 'Invalid credentials')
       }
     } catch {
       setError('Network error')

@@ -2,16 +2,34 @@
 import React, { useState } from 'react'
 import { Save, RefreshCw } from 'lucide-react'
 
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+
 export default function ThemeSettings() {
   const [primaryColor, setPrimaryColor] = useState('#2fb4ff')
   const [secondaryColor, setSecondaryColor] = useState('#0b1a2a')
   const [font, setFont] = useState('Inter')
 
-  const handleSave = () => {
-    document.documentElement.style.setProperty('--accent', primaryColor)
-    // In a real app, save to backend/localStorage
-    alert('Theme updated successfully!')
-  }
+  const handleSave = async () => {
+     document.documentElement.style.setProperty('--accent', primaryColor)
+     
+     try {
+       const res = await fetch(`${API_BASE}/api/theme`, {
+         method: 'PUT',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ primaryColor, secondaryColor, font }),
+         credentials: 'include'
+       })
+       const data = await res.json()
+       if (data.success) {
+         alert('Theme updated successfully!')
+       } else {
+         alert('Failed to save theme settings.')
+       }
+     } catch (error) {
+       console.error('Failed to save theme:', error)
+       alert('Network error. Failed to save theme settings.')
+     }
+   }
 
   const handleReset = () => {
     setPrimaryColor('#2fb4ff')
